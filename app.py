@@ -50,22 +50,32 @@ tab1, tab2 = st.tabs(["🎁 Redeem Voucher", "🛠️ Dashboard Panitia"])
 with tab1:
     st.header("Redeem Kode Disini")
     
+    # Hitung jumlah voucher yang saat ini masih pending
+    jumlah_pending = sum(1 for v in st.session_state.vouchers if "Pending" in v["status"])
+    
+    # Berikan warning di atas form jika antrean sudah penuh
+    if jumlah_pending >= 3:
+        st.error("🚨 **SLOT ANTREAN PENUH!** Kamu punya 3 voucher yang masih PENDING. Sesuai protokol, kamu GAK BISA redeem kode baru dulu yaa. Masukin lagi gulungan kertasnya ke toples, dan tunggu sampai kita ketemu buat mencairkannya! 🛒")
+    
     with st.form(key="redeem_form", clear_on_submit=True):
-        # Menggunakan .lower() agar tetap valid meski pacarmu mengetik huruf besar/kecil
         input_code = st.text_input("Masukkan Kode Unik :").strip().lower()
         
         # Kolom tanggal otomatis menampilkan tanggal hari ini dan dikunci (disabled)
         hari_ini = datetime.today()
         st.date_input("Tanggal Redeem (Otomatis Terkunci):", value=hari_ini, disabled=True)
         
-        notes = st.text_area("Catatan Tambahan untuk Pacarmu yang ganteng ini (Opsional):", placeholder="contoh : aku sayang kamu banget banget tapi suka malu mau billing langsung, jadi ngetik disini aja")
+        notes = st.text_area("Catatan Tambahan untuk Pacarmu yang ganteng ini (Opsional):", placeholder="contoh : aku sayang kamu banget banget tapi suka malu mau bilang langsung, jadi ngetik disini aja")
         
         submit_button = st.form_submit_button(label="GASSSS 🚀")
         
         if submit_button:
-            # Validasi kode di kamus master data
-            if input_code in VOUCHER_DICT:
-                # Validasi apakah sudah pernah di-redeem sebelumnya
+            # VALIDASI 1: Cek apakah antrean sudah penuh (Maksimal 3)
+            if jumlah_pending >= 3:
+                st.error("Gak bisa di-gas, Beb! maksimal 3 antrean sayangg, kalo udah antrean nya ga tiga baru gulungan ini boleh di-redeem lagi. Masukin kertasnya ke toples dulu ya! 🪙")
+            
+            # VALIDASI 2: Cek apakah kode ada di master data
+            elif input_code in VOUCHER_DICT:
+                # VALIDASI 3: Cek apakah sudah pernah di-redeem sebelumnya
                 already_claimed = any(v["kode_unik"] == input_code for v in st.session_state.vouchers)
                 
                 if already_claimed:
@@ -79,7 +89,7 @@ with tab1:
                         "id": len(st.session_state.vouchers) + 1,
                         "kode_unik": input_code,
                         "nama_voucher": hadiah_terungkap,
-                        "tanggal_rencana": tanggal_saja, # Otomatis mencatat tanggal redeem saat tombol diklik
+                        "tanggal_rencana": tanggal_saja,
                         "catatan": notes,
                         "status": "⌛ Pending (Menunggu Ketemu)",
                         "waktu_klaim": waktu_sekarang
@@ -92,6 +102,7 @@ with tab1:
                     st.balloons()
                     st.success(f"🎉 KODE VALID! Kamu mendapatkan: **{hadiah_terungkap}**")
                     st.info("Hadiah sudah otomatis masuk ke daftar antrean Achsann untuk diwujudkan pas ketemu!")
+                    st.rerun() # Refresh halaman agar counter jumlah_pending langsung update
             else:
                 st.error("Kodenya salah atau gak terdaftar nih. Coba periksa typo atau tulisan di kertasnya lagi ya!")
 
@@ -133,7 +144,7 @@ with tab2:
                 st.write(f"📅 Tanggal Doi Redeem: `{v['tanggal_rencana']}`")
                 st.write(f"💬 Catatan doi: *\"{v['catatan'] or '-'}\"*")
                 
-                # Tombol Aksi Update Status (Menggunakan key unik berbasis id dan kode)
+                # Tombol Aksi Update Status
                 if st.button(f"Tandai Selesai (ID {v['id']})", key=f"btn_done_{v['id']}_{v['kode_unik']}"):
                     for index, item in enumerate(st.session_state.vouchers):
                         if item["id"] == v["id"]:
@@ -143,7 +154,7 @@ with tab2:
                     st.rerun()
                 st.divider()
         
-        # --- ZONA BAHAYA: TOMBOL RESET DATA DIGITAL ---
+        # --- ZONA BAHAYA: TOMBOL RESET DATA ---
         st.write("")
         st.write("---")
         st.subheader("🚨 Zona Bahaya")
