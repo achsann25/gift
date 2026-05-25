@@ -100,7 +100,7 @@ with tab1:
                     # Efek Selebrasi Balon & Notifikasi (Aman tanpa st.rerun)
                     st.balloons()
                     st.success(f"🎉 KODE VALID! Kamu mendapatkan: **{hadiah_terungkap}**")
-                    st.info("Hadiah sudah otomatis masuk ke daftar antrean Achsann untuk diwujudkan pas ketemu!")
+                    st.info("Hadiah sudah otomatis masuk ke daftar antrean buat diwujudin pas ketemu!")
                     st.toast("Voucher berhasil masuk antrean digital! 🪙", icon="🎁")
             else:
                 st.error("Kodenya salah atau gak terdaftar nih. Coba periksa typo atau tulisan di kertasnya lagi ya!")
