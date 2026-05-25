@@ -71,8 +71,7 @@ with tab1:
         if submit_button:
             # VALIDASI 1: Cek apakah antrean sudah penuh (Maksimal 3)
             if jumlah_pending >= 3:
-                st.error("Gak bisa di-gas, Beb! maksimal 3 antrean sayangg, kalo udah antrean nya ga tiga baru gulungan ini boleh di-redeem lagi. Masukin kertasnya ke toples dulu ya! 🪙")
-            
+st.error("Gak bisa di-gas, Beb! maksimal 3 antrean sayangg, kalo udah antrean nya ga tiga baru gulungan ini boleh di-redeem lagi. Masukin kertasnya ke toples dulu ya! 🪙")            
             # VALIDASI 2: Cek apakah kode ada di master data
             elif input_code in VOUCHER_DICT:
                 # VALIDASI 3: Cek apakah sudah pernah di-redeem sebelumnya
@@ -98,11 +97,11 @@ with tab1:
                     st.session_state.vouchers.append(new_claim)
                     save_data(st.session_state.vouchers)
                     
-                    # Efek Selebrasi Balon
+                    # Efek Selebrasi Balon & Notifikasi (Aman tanpa st.rerun)
                     st.balloons()
                     st.success(f"🎉 KODE VALID! Kamu mendapatkan: **{hadiah_terungkap}**")
                     st.info("Hadiah sudah otomatis masuk ke daftar antrean Achsann untuk diwujudkan pas ketemu!")
-                    st.rerun() # Refresh halaman agar counter jumlah_pending langsung update
+                    st.toast("Voucher berhasil masuk antrean digital! 🪙", icon="🎁")
             else:
                 st.error("Kodenya salah atau gak terdaftar nih. Coba periksa typo atau tulisan di kertasnya lagi ya!")
 
