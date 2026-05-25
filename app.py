@@ -6,14 +6,14 @@ from datetime import datetime
 # 1. DATABASE LOKAL (MENGGUNAKAN JSON)
 DB_FILE = "vouchers.json"
 
-# Master Data: 16 Kode Unik (Cetak di kertas) & Hadiahnya (Muncul di Web)
+# Master Data: 10 Kode Unik (Cetak di kertas) & Hadiahnya (Muncul di Web)
 VOUCHER_DICT = {
-    "ofslfs": "kamu dapet es krim mcd sayangg, selamat ya",
+    "ofslfs": "kamu dapet es krim mcd, selamat ya",
     "ujwsmf": "asekk dapet es krim walls",
-    "rjwfxf": "selamat kamu mendapatkan voucher makan mie ayam",
+    "rjwfxf": "selamat anda mendapatkan voucher makan mie ayam",
     "xjsinwn": "kali ini doang nih aku ngasi kretek ke kamu",
-    "fpzofson": "selamat, kamu mendapatkan voucher jajan di dadaha, hayuu support umkm",
-    "fpzfif": "Selamat kamu mendapatkan kesempatan foto dengan orang keren dan ganteng (aku)",
+    "fpzofson": "selamat, anda mendapatkan voucher jajan di dadaha hayuu, support umkm",
+    "fpzfif": "Selamat anda mendapatkan kesempatan foto dengan orang keren dan ganteng (aku)",
     "inxnsi": "asekk dapet es krim walls",
     "xfrf": "burger paling enak sejagat dunia raya(lazatto) free for you",
     "pfrz": "WAHHH anda mendapatkan kesempatan untuk video call sama orang keren dan ganteng (aku) ",
@@ -51,13 +51,14 @@ with tab1:
     st.header("Redeem Kode Disini")
     
     with st.form(key="redeem_form", clear_on_submit=True):
+        # Menggunakan .lower() agar tetap valid meski pacarmu mengetik huruf besar/kecil
         input_code = st.text_input("Masukkan Kode Unik :").strip().lower()
         
-        # Di sini kolom tanggal kita buat otomatis menampilkan tanggal hari ini dan dikunci (disabled)
+        # Kolom tanggal otomatis menampilkan tanggal hari ini dan dikunci (disabled)
         hari_ini = datetime.today()
         st.date_input("Tanggal Redeem (Otomatis Terkunci):", value=hari_ini, disabled=True)
         
-        notes = st.text_area("Catatan Tambahan untuk Pacarmu yang ganteng ini (Opsional):", placeholder="contoh : aku sayang kamu banget banget tapi suka malu mau bilang langsung, jadi ngetik disini aja")
+        notes = st.text_area("Catatan Tambahan untuk Pacarmu yang ganteng ini (Opsional):", placeholder="contoh : aku sayang kamu banget banget tapi suka malu mau billing langsung, jadi ngetik disini aja")
         
         submit_button = st.form_submit_button(label="GASSSS 🚀")
         
@@ -89,10 +90,10 @@ with tab1:
                     
                     # Efek Selebrasi Balon
                     st.balloons()
-                    st.success(f"🎉 KODE VALID! : **{hadiah_terungkap}**")
-                    st.info("Hadiah sudah otomatis masuk ke daftar antrian, nanti diwujudin pas ketemu!")
+                    st.success(f"🎉 KODE VALID! Kamu mendapatkan: **{hadiah_terungkap}**")
+                    st.info("Hadiah sudah otomatis masuk ke daftar antrean Achsann untuk diwujudkan pas ketemu!")
             else:
-                st.error("Kodenya salah atau gak terdaftar nih. Coba periksa typo atau tulisan di kertasnya lagi !")
+                st.error("Kodenya salah atau gak terdaftar nih. Coba periksa typo atau tulisan di kertasnya lagi ya!")
 
     # Tampilkan Riwayat Buku Tabungan Voucher Milik Pacar
     st.subheader("📋 Buku Tabungan Vouchermu")
@@ -118,7 +119,7 @@ with tab2:
     st.header("(jangan coba-coba masuk disini ya, gabakal bisa juga yee)")
     password = st.text_input("Masukkan Password Panitia:", type="password")
     
-    if password == "ajengforlife":
+    if password == "achsannofficial":
         st.success("Akses diterima! Silakan kelola janji kencanmu, Achsann.")
         
         pending_vouchers = [v for v in st.session_state.vouchers if "Pending" in v["status"]]
@@ -132,7 +133,7 @@ with tab2:
                 st.write(f"📅 Tanggal Doi Redeem: `{v['tanggal_rencana']}`")
                 st.write(f"💬 Catatan doi: *\"{v['catatan'] or '-'}\"*")
                 
-                # Tombol Aksi Update Status
+                # Tombol Aksi Update Status (Menggunakan key unik berbasis id dan kode)
                 if st.button(f"Tandai Selesai (ID {v['id']})", key=f"btn_done_{v['id']}_{v['kode_unik']}"):
                     for index, item in enumerate(st.session_state.vouchers):
                         if item["id"] == v["id"]:
@@ -141,5 +142,19 @@ with tab2:
                     st.toast(f"Mantap, voucher ID {v['id']} resmi lunas!")
                     st.rerun()
                 st.divider()
+        
+        # --- ZONA BAHAYA: TOMBOL RESET DATA DIGITAL ---
+        st.write("")
+        st.write("---")
+        st.subheader("🚨 Zona Bahaya")
+        st.write("Klik tombol di bawah ini jika ingin mengosongkan kembali seluruh riwayat tabungan voucher (Reset total).")
+        
+        if st.button("RESET ALL DATA VOUCHER", key="reset_all_data"):
+            if os.path.exists(DB_FILE):
+                os.remove(DB_FILE)
+            st.session_state.vouchers = []
+            st.success("Semua data riwayat redeem berhasil DIBERSIHKAN! 🧹")
+            st.rerun()
+
     elif password != "":
-        st.error("Password salah sayanggg! Jangan coba-coba masuk ke sistem akuu. hahahah 🤫")
+        st.error("Password salah bro! Jangan coba-coba mengelabui sistem Achsann. 🤫")
