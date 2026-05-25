@@ -119,7 +119,7 @@ with tab2:
     st.header("(jangan coba-coba masuk disini ya, gabakal bisa juga yee)")
     password = st.text_input("Masukkan Password Panitia:", type="password")
     
-    if password == "achsannofficial":
+    if password == "ajengforlife":
         st.success("Akses diterima! Silakan kelola janji kencanmu, Achsann.")
         
         pending_vouchers = [v for v in st.session_state.vouchers if "Pending" in v["status"]]
