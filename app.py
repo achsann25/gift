@@ -71,7 +71,7 @@ with tab1:
         if submit_button:
             # VALIDASI 1: Cek apakah antrean sudah penuh (Maksimal 3)
             if jumlah_pending >= 3:
-st.error("Gak bisa di-gas, Beb! maksimal 3 antrean sayangg, kalo udah antrean nya ga tiga baru gulungan ini boleh di-redeem lagi. Masukin kertasnya ke toples dulu ya! 🪙")            
+                st.error("Gak bisa di-gas, Beb! maksimal 3 antrean sayangg, kalo udah antrean nya ga tiga baru gulungan ini boleh di-redeem lagi. Masukin kertasnya ke toples dulu ya! 🪙")            
             # VALIDASI 2: Cek apakah kode ada di master data
             elif input_code in VOUCHER_DICT:
                 # VALIDASI 3: Cek apakah sudah pernah di-redeem sebelumnya
